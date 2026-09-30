@@ -1,0 +1,19 @@
+{
+  "name": "spicetify-glassmorphism",
+  "version": "0.1.0",
+  "description": "Frosted-glass Spicetify theme inspired by Apple's materials",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "link": "node scripts/link.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "sass": "^1.105.1",
+    "typescript": "^7.0.2"
+  }
+}

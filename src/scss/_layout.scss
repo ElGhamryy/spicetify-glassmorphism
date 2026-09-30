@@ -1,0 +1,72 @@
+@use "selectors" as *;
+@use "mixins" as *;
+
+// Page chrome becomes transparent; the main panels become glass.
+html,
+body {
+  background: transparent !important;
+}
+
+#main {
+  position: relative;
+  z-index: 1;
+}
+
+#{$top-container},
+#{$global-nav} {
+  @include clear;
+}
+
+// Left library rail
+#{$nav-bar} {
+  @include clear;
+
+  .main-yourLibraryX-libraryContainer {
+    @include glass-panel(regular, lg);
+  }
+}
+
+// Main view
+#{$main-view} {
+  @include glass-panel(regular, lg);
+}
+
+// Right sidebar
+#{$right-sidebar} {
+  @include glass-panel(regular, lg);
+}
+
+// Now-playing bar: the outer bar is clear, the inner aside is the floating glass bar.
+#{$now-playing-bar} {
+  @include clear;
+}
+
+#{$now-playing} {
+  @include glass-panel(regular, lg);
+  overflow: visible; // keep tooltips and the volume slider from being clipped
+}
+
+// Top bar inside the main view: drop the colored slab and its dark overlay.
+#{$top-bar-overlay} {
+  background: transparent !important;
+}
+
+// Sticky bars (top bar, pinned track-list header) sit over scrolling rows. Backdrop blur does not
+// reach those rows in Spotify's compositor setup, so these bars use a mostly opaque tint instead.
+// Spotify fades the top bar background in with scroll, so it fades in here too.
+// Sticky bars sit over scrolling rows. Backdrop blur does not reach those rows in Spotify's
+// compositor setup, so they use a mostly opaque tint. Spotify fades the top bar background in
+// with scroll; sticky.ts marks the track-list header as .glass-stuck once it is pinned.
+#{$top-bar-bg} {
+  background: rgba(var(--glass-tint-rgb), 0.96) !important;
+  border: 0;
+}
+
+.main-trackList-trackListHeader {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(var(--glass-edge-rgb), 0.12);
+
+  &.glass-stuck {
+    background: rgba(var(--glass-tint-rgb), 0.96) !important;
+  }
+}

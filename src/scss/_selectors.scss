@@ -1,0 +1,34 @@
+// Every Spotify class name or id the theme touches lives here. When a Spotify update
+// renames something, this is the only file to fix. Verified against the live DOM (see docs/selectors.md).
+// Avoid hashed class names; prefer Root__*, main-* and data-testid.
+
+// Shell
+$top-container:   ".Root__top-container";
+$global-nav:      "#global-nav-bar";
+$nav-bar:         ".Root__nav-bar";
+$main-view:       ".Root__main-view";
+$right-sidebar:   ".Root__right-sidebar-peek";
+$now-playing-bar: ".Root__now-playing-bar";
+$now-playing:     ".main-nowPlayingBar-container";
+
+// Top bar inside the main view
+$top-bar:         ".main-topBar-container";
+$top-bar-bg:      ".main-topBar-background";
+$top-bar-overlay: ".main-topBar-overlay";
+
+// Global nav pieces
+$search-input:    ".main-globalNav-searchInputSection";
+$nav-icon-button: ".main-globalNav-searchContainer button, .main-globalNav-contentRight button";
+
+// Overlays
+$modal:           ".GenericModal";
+$popover-layer:   "#floating-ui-popover-layer";
+$context-menu:    "#context-menu, .main-contextMenu-menu";
+
+// Content
+$card:            ".main-card-card";
+$track-row:       "[data-testid='tracklist-row']";
+$scroll-handle:   ".os-scrollbar-handle";
+
+// Our own elements (created in backdrop.ts)
+$backdrop:        ".glass-backdrop";

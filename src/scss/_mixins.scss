@@ -1,0 +1,59 @@
+// A glass surface: tinted fill, backdrop blur, rim, shadow.
+// $level: thin | regular | thick. $radius: sm | md | lg | pill | none.
+// Falls back to a nearly solid tint where backdrop-filter is unavailable.
+@mixin glass($level: regular, $radius: lg, $shadow: true) {
+  background: var(--glass-sheen), var(--glass-fill-#{$level});
+  border: var(--glass-rim);
+  @if $radius != none {
+    border-radius: var(--glass-radius-#{$radius});
+  }
+  box-shadow: inset 0 1px 0 rgba(var(--glass-edge-rgb), var(--glass-top-alpha))#{if($shadow, ", var(--glass-shadow)", "")};
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur-#{$level}) * var(--glass-blur-scale))) saturate(var(--glass-saturate));
+    backdrop-filter: blur(calc(var(--glass-blur-#{$level}) * var(--glass-blur-scale))) saturate(var(--glass-saturate));
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: rgba(var(--glass-tint-rgb), 0.94);
+  }
+}
+
+// Remove an opaque Spotify background so the glass layer behind shows through.
+@mixin clear {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+// Hover/press lift for interactive surfaces.
+@mixin lift {
+  transition:
+    transform var(--glass-base) var(--glass-ease),
+    box-shadow var(--glass-base) var(--glass-ease),
+    background-color var(--glass-fast) var(--glass-ease);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-lift);
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// A large glass panel: the glass surface plus a rounded clip for its scrolling content.
+// Tried putting the blur on a ::before layer to avoid seams; that cut the panel off from the
+// backdrop and made it flat, so the blur stays on the panel itself.
+@mixin glass-panel($level: regular, $radius: lg) {
+  @include glass($level, $radius);
+  overflow: hidden;
+}
+
+// Glass for elements that sit inside another blurred panel (cards, sidebar sections).
+// A backdrop-filter nested inside a backdrop-filter makes Chromium draw a hard horizontal seam
+// across the parent at the child's top edge, so nested surfaces get fill, sheen and rim only.
+@mixin glass-flat($level: thin, $radius: md) {
+  background: var(--glass-sheen), var(--glass-fill-#{$level});
+  border: var(--glass-rim);
+  border-radius: var(--glass-radius-#{$radius});
+  box-shadow: inset 0 1px 0 rgba(var(--glass-edge-rgb), var(--glass-top-alpha));
+}

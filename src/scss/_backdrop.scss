@@ -1,0 +1,38 @@
+@use "selectors" as *;
+
+// Two stacked art layers (created by src/ts/backdrop.ts) crossfade on track change.
+// They sit behind #main, so every glass panel blurs the same picture.
+#{$backdrop} {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 50vh at 12% 8%, rgba(120, 140, 255, 0.45), transparent 70%),
+    radial-gradient(55vw 55vh at 92% 30%, rgba(255, 120, 190, 0.28), transparent 70%),
+    radial-gradient(70vw 50vh at 50% 105%, rgba(90, 200, 255, 0.25), transparent 70%),
+    rgb(var(--glass-tint-rgb));
+
+  .glass-backdrop__layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity var(--glass-slow) var(--glass-ease);
+    will-change: opacity;
+
+    &.is-visible {
+      opacity: var(--glass-art-opacity, 1);
+    }
+  }
+
+}
+
+
+
+// Settings: backdrop off leaves the gradient mesh only.
+:root[data-glass-backdrop="off"] #{$backdrop} .glass-backdrop__layer {
+  opacity: 0 !important;
+}

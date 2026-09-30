@@ -1,0 +1,98 @@
+@use "mixins" as *;
+@use "selectors" as *;
+
+// Settings panel shown in Spicetify's popup modal (see src/ts/settings.ts).
+.glass-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 320px;
+  padding: 4px 2px 8px;
+}
+
+.glass-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 14px;
+}
+
+.glass-segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--glass-radius-pill);
+  background: rgba(var(--glass-edge-rgb), 0.1);
+  box-shadow: inset 0 0 0 1px rgba(var(--glass-edge-rgb), 0.12);
+
+  button {
+    border: 0;
+    padding: 5px 14px;
+    border-radius: var(--glass-radius-pill);
+    background: transparent;
+    color: var(--spice-subtext);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+      background-color var(--glass-fast) var(--glass-ease),
+      color var(--glass-fast) var(--glass-ease);
+
+    &.is-active {
+      background: rgba(var(--glass-edge-rgb), 0.85);
+      color: #12141f;
+      box-shadow: 0 1px 4px rgba(var(--glass-shadow-rgb), 0.3);
+    }
+  }
+}
+
+.glass-switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--glass-radius-pill);
+  background: rgba(var(--glass-edge-rgb), 0.2);
+  cursor: pointer;
+  transition: background-color var(--glass-base) var(--glass-ease);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(var(--glass-shadow-rgb), 0.4);
+    transition: transform var(--glass-base) var(--glass-ease);
+  }
+
+  &[aria-checked="true"] {
+    background: var(--spice-button);
+
+    &::after {
+      transform: translateX(18px);
+    }
+  }
+}
+
+// Popover opened by the top-bar button.
+.glass-popover {
+  position: fixed;
+  top: 64px;
+  left: 96px;
+  z-index: 9999;
+  min-width: 340px;
+  padding: 18px 20px 14px;
+  color: var(--spice-text);
+  @include glass(thick, lg);
+
+  h2 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}

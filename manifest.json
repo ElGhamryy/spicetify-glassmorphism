@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Glass",
+    "description": "Frosted-glass theme with floating blurred panels and an album-art backdrop.",
+    "usercss": "dist/Glass/user.css",
+    "schemes": "dist/Glass/color.ini",
+    "include": ["dist/Glass/theme.js"],
+    "readme": "README.md",
+    "authors": [{ "name": "ElGhamryy", "url": "https://github.com/ElGhamryy" }],
+    "tags": ["dark", "light", "glass", "blur", "transparent"]
+  }
+]

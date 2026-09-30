@@ -1,0 +1,151 @@
+@use "selectors" as *;
+@use "mixins" as *;
+
+// ---- Global nav (history buttons, search, profile) ----
+// Spotify's button and input rules set background-color with higher specificity, so the
+// translucent fill needs !important to win. The sheen and rim come from the glass mixin.
+#{$nav-icon-button},
+.main-globalNav-searchInputSection input,
+.main-globalNav-searchInputSection input:hover,
+.main-globalNav-searchInputSection input:focus {
+  @include glass(thin, pill, false);
+  background-color: var(--glass-fill-thin) !important;
+  transition: background-color var(--glass-fast) var(--glass-ease);
+}
+
+.main-globalNav-searchInputSection input:focus {
+  background-color: var(--glass-fill-regular) !important;
+}
+
+// ---- Left rail ----
+.main-yourLibraryX-entryPoints {
+  @include clear;
+}
+
+// ---- Main view content ----
+.playlist-playlist-playlistContent,
+.main-view-container__scroll-node-child,
+.main-actionBar-ActionBarContainer {
+  background: transparent !important;
+}
+
+
+.main-trackList-trackListRow {
+  border-radius: var(--glass-radius-sm);
+  transition: background-color var(--glass-fast) var(--glass-ease);
+
+  &:hover {
+    background-color: var(--glass-hover) !important;
+  }
+}
+
+// ---- Cards ----
+#{$card} {
+  @include glass-flat(thin, md);
+  @include lift;
+}
+
+// ---- Right sidebar ----
+.NowPlayingView,
+.NowPlayingView::before {
+  background: transparent !important;
+}
+
+.main-nowPlayingView-section {
+  @include glass-flat(thin, md);
+}
+
+// ---- Scrollbars ----
+#{$scroll-handle} {
+  background: rgba(var(--glass-edge-rgb), 0.28) !important;
+  border-radius: var(--glass-radius-pill) !important;
+  transition: background-color var(--glass-fast) var(--glass-ease);
+
+  &:hover {
+    background: rgba(var(--glass-edge-rgb), 0.5) !important;
+  }
+}
+
+// ---- Overlays: context menus, popovers, modals use the thick material ----
+#{$modal},
+#{$context-menu},
+#{$popover-layer} [role="dialog"],
+#{$popover-layer} [role="tooltip"] {
+  @include glass(thick, md);
+}
+
+#{$modal} {
+  @include glass(thick, lg);
+}
+
+// Top-level menus: the glass is on #context-menu; Spotify's inner list must not cover it.
+#context-menu > [role="menu"] {
+  background: transparent !important;
+  border-radius: inherit;
+  box-shadow: none !important;
+}
+
+// Submenus (Add to playlist, Sleep timer...) are separate popups with no glass wrapper, so the list itself is the glass.
+[role="menu"]:not(#context-menu > [role="menu"]) {
+  @include glass(thick, md);
+  // Nested inside the parent menu's own blur, so a live blur has nothing to sample: use a denser tint.
+  background: var(--glass-sheen), rgba(var(--glass-tint-rgb), 0.8);
+  overflow: hidden;
+}
+
+[role="menuitem"] {
+  border-radius: var(--glass-radius-sm) !important;
+}
+
+// Marked by src/ts/opaque.ts: solid bands Spotify paints under hashed class names.
+.glass-clear {
+  background-color: transparent !important;
+}
+
+.glass-clear-image {
+  background-image: none !important;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(#000 35%, transparent);
+  mask-image: linear-gradient(#000 35%, transparent);
+}
+
+.glass-soft {
+  background: var(--glass-fill-thin) !important;
+  border-radius: var(--glass-radius-md);
+}
+
+// Now-playing sidebar: Spotify lays dark gradients over the canvas/cover area (and behind the track
+// title). They end abruptly and read as a second backdrop inside the glass, so they are removed.
+.main-nowPlayingView-canvasVisualEnhancement::before,
+.main-nowPlayingView-canvasVisualEnhancement::after,
+.main-nowPlayingView-contextItemInfo::before {
+  display: none !important;
+}
+
+// Headers that Spotify tints with the artist/playlist colour end in a hard edge and, on scroll,
+// turn into a solid slab. Drop the solid wash and let the photo dissolve into the glass over most of
+// its height. Pure CSS (no script) so the fade is there from the first frame; the wrapper is the
+// element holding the photo layers, recognised by their inline background-image.
+.before-scroll-node > div:has(> [style*="background-image"]) {
+  -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.85) 22%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 80%, transparent 100%);
+  mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.85) 22%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 80%, transparent 100%);
+
+  > *::after {
+    background: none !important;
+  }
+}
+
+// Plain playlist/album headers: a solid colour band (.main-entityHeader-backgroundColor) sits above a
+// wash that starts at the same colour and fades out (actionBarBackground). Together they are one
+// continuous drop, so the band keeps its full strength to the bottom and only its opacity is lowered
+// to match where the wash begins (0.7). Fading the band out too would leave a clear gap between them.
+.main-entityHeader-backgroundColor {
+  opacity: 0.7;
+}
+
+// Headers with a photo are different: the photo dissolves to nothing, so the wash under it has to fade
+// in from nothing or it starts at full strength right where the photo ends and draws a line.
+.main-view-container:has(.before-scroll-node > div > [style*="background-image"]) [class*="actionBarBackground"] {
+  -webkit-mask-image: linear-gradient(transparent, #000 85%);
+  mask-image: linear-gradient(transparent, #000 85%);
+}

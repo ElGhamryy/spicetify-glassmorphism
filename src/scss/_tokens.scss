@@ -1,0 +1,89 @@
+// Design tokens for the glass material. Everything downstream (mixins, layout, components)
+// reads these custom properties, so user options (step 11) only need to override them on :root.
+//
+// Scheme handling: Spicetify fills --spice-* from color.ini. theme.ts sets
+// data-glass-scheme="dark|light" on :root from the luminance of --spice-main.
+
+@use "sass:map";
+
+// Material levels: how much blur and tint each surface type gets.
+$materials: (
+  "thin":    (blur: 14px, fill: 0.24),  // tooltips, chips, hover fills
+  "regular": (blur: 28px, fill: 0.30),  // sidebars, panels, now-playing bar
+  "thick":   (blur: 44px, fill: 0.62),  // menus, popovers, modals
+);
+
+$radii: (
+  "sm": 8px,
+  "md": 12px,
+  "lg": 16px,
+  "pill": 999px,
+);
+
+:root {
+  // Tint and edge colors as bare RGB triplets so they work inside rgba().
+  --glass-tint-rgb: var(--spice-rgb-main, 18, 20, 31);
+  --glass-edge-rgb: 255, 255, 255;
+  --glass-shadow-rgb: 0, 0, 0;
+
+  // Materials
+  @each $name, $m in $materials {
+    --glass-blur-#{$name}: #{map.get($m, "blur")};
+    --glass-fill-#{$name}: rgba(var(--glass-tint-rgb), calc(#{map.get($m, "fill")} * var(--glass-opacity-scale)));
+  }
+  --glass-saturate: 180%;
+  --glass-blur-scale: 1; // multipliers, set by the settings menu
+  --glass-opacity-scale: 1;
+
+  // Edges: a 1px rim and a soft top sheen, the two cues that read as "glass"
+  --glass-edge-alpha: 0.07;
+  --glass-top-alpha: 0.10; // light catching the top edge
+  --glass-rim: 1px solid rgba(var(--glass-edge-rgb), var(--glass-edge-alpha));
+  --glass-sheen: linear-gradient(
+    180deg,
+    rgba(var(--glass-edge-rgb), 0.09) 0%,
+    rgba(var(--glass-edge-rgb), 0) 38%
+  );
+  --glass-shadow-alpha: 0.22;
+  --glass-shadow: 0 12px 40px rgba(var(--glass-shadow-rgb), var(--glass-shadow-alpha));
+  --glass-shadow-lift: 0 16px 48px rgba(var(--glass-shadow-rgb), calc(var(--glass-shadow-alpha) + 0.1));
+
+  // Interaction fills
+  --glass-hover: rgba(var(--glass-edge-rgb), 0.08);
+  --glass-press: rgba(var(--glass-edge-rgb), 0.14);
+
+  // Shape
+  @each $name, $r in $radii {
+    --glass-radius-#{$name}: #{$r};
+  }
+  --glass-gap: 8px; // space between floating panels
+
+  // Motion
+  --glass-ease: cubic-bezier(0.22, 1, 0.36, 1); // fast out, soft landing
+  --glass-fast: 140ms;
+  --glass-base: 260ms;
+  --glass-slow: 600ms; // backdrop crossfade
+}
+
+// Light schemes: dark-on-light glass needs a dimmer rim and a lighter shadow.
+:root[data-glass-scheme="light"] {
+  --glass-edge-alpha: 0.45;
+  --glass-top-alpha: 0.7;
+  --glass-shadow-alpha: 0.10;
+  --glass-shadow-rgb: 30, 40, 80;
+  --glass-hover: rgba(var(--glass-shadow-rgb), 0.07);
+  --glass-press: rgba(var(--glass-shadow-rgb), 0.13);
+  --glass-sheen: linear-gradient(
+    180deg,
+    rgba(var(--glass-edge-rgb), 0.55) 0%,
+    rgba(var(--glass-edge-rgb), 0) 40%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --glass-fast: 0ms;
+    --glass-base: 0ms;
+    --glass-slow: 0ms;
+  }
+}
