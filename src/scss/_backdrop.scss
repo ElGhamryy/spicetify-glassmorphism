@@ -1,18 +1,26 @@
 @use "selectors" as *;
 
+// The mesh shown when there is no album art (or the art backdrop is off).
+$mesh:
+  radial-gradient(60vw 50vh at 12% 8%, rgba(120, 140, 255, 0.45), transparent 70%),
+  radial-gradient(55vw 55vh at 92% 30%, rgba(255, 120, 190, 0.28), transparent 70%),
+  radial-gradient(70vw 50vh at 50% 105%, rgba(90, 200, 255, 0.25), transparent 70%),
+  rgb(var(--glass-tint-rgb));
+
+// Read by src/ts/vibrancy.ts.
+:root {
+  --glass-panels: #{$vibrant-panels};
+}
+
 // Two stacked art layers (created by src/ts/backdrop.ts) crossfade on track change.
-// They sit behind #main, so every glass panel blurs the same picture.
+// They sit behind #main, so every glass panel shows the same picture.
 #{$backdrop} {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background:
-    radial-gradient(60vw 50vh at 12% 8%, rgba(120, 140, 255, 0.45), transparent 70%),
-    radial-gradient(55vw 55vh at 92% 30%, rgba(255, 120, 190, 0.28), transparent 70%),
-    radial-gradient(70vw 50vh at 50% 105%, rgba(90, 200, 255, 0.25), transparent 70%),
-    rgb(var(--glass-tint-rgb));
+  background: $mesh;
 
   .glass-backdrop__layer {
     position: absolute;
@@ -28,9 +36,19 @@
     }
   }
 
+  // A second, more saturated copy of the same picture, clipped to the shapes of the glass panels
+  // (clip-path set by vibrancy.ts). This is what a panel's `backdrop-filter: saturate()` used to
+  // produce, but it is drawn once and only changes on track change or resize, where a live
+  // backdrop-filter is re-run whenever the panel's own content repaints.
+  .glass-backdrop__vibrant {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: $mesh;
+    filter: saturate(var(--glass-saturate));
+    clip-path: inset(100%);
+  }
 }
-
-
 
 // Settings: backdrop off leaves the gradient mesh only.
 :root[data-glass-backdrop="off"] #{$backdrop} .glass-backdrop__layer {

@@ -8,7 +8,7 @@
 .main-globalNav-searchInputSection input,
 .main-globalNav-searchInputSection input:hover,
 .main-globalNav-searchInputSection input:focus {
-  @include glass(thin, pill, false);
+  @include glass(thin, pill, false, false);
   background-color: var(--glass-fill-thin) !important;
   transition: background-color var(--glass-fast) var(--glass-ease);
 }
@@ -126,7 +126,8 @@
 // turn into a solid slab. Drop the solid wash and let the photo dissolve into the glass over most of
 // its height. Pure CSS (no script) so the fade is there from the first frame; the wrapper is the
 // element holding the photo layers, recognised by their inline background-image.
-.before-scroll-node > div:has(> [style*="background-image"]) {
+// .glass-hero is set by src/ts/sticky.ts (see there for why this is not a :has() selector).
+.glass-hero {
   -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.85) 22%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 80%, transparent 100%);
   mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.85) 22%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 80%, transparent 100%);
 
@@ -145,7 +146,7 @@
 
 // Headers with a photo are different: the photo dissolves to nothing, so the wash under it has to fade
 // in from nothing or it starts at full strength right where the photo ends and draws a line.
-.main-view-container:has(.before-scroll-node > div > [style*="background-image"]) [class*="actionBarBackground"] {
+:root[data-glass-hero] .main-view-container [class*="actionBarBackground"] {
   -webkit-mask-image: linear-gradient(transparent, #000 85%);
   mask-image: linear-gradient(transparent, #000 85%);
 }

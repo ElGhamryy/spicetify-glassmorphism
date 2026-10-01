@@ -16,4 +16,7 @@ mkdir -p "$target"
 cp -R "$source/." "$target/"
 
 spicetify config current_theme Glass color_scheme dark inject_css 1 replace_colors 1 inject_theme_js 1 overwrite_assets 1
+# Spicetify needs a backup of Spotify's original files before it can apply anything. "backup" makes
+# one the first time and exits non-zero when one already exists, which is fine, so its result is ignored.
+spicetify backup >/dev/null 2>&1 || true
 spicetify apply

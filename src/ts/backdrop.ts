@@ -4,6 +4,8 @@
 // stretches to the full window. A CSS `filter: blur()` on a window-sized layer is rendered in GPU
 // tiles and leaves visible horizontal seams; smooth upscaling of a small image does not.
 
+import { trackPanels } from "./vibrancy";
+
 const IMAGE_PREFIX = "spotify:image:";
 const CDN = "https://i.scdn.co/image/";
 const W = 64;
@@ -51,15 +53,23 @@ export function initBackdrop(): void {
 
   const root = document.createElement("div");
   root.className = "glass-backdrop";
-  const layers = [0, 1].map(() => {
-    const el = document.createElement("canvas");
-    el.className = "glass-backdrop__layer";
-    el.width = W;
-    el.height = H;
-    root.appendChild(el);
-    return el;
-  });
+  const makeLayers = (parent: HTMLElement) =>
+    [0, 1].map(() => {
+      const el = document.createElement("canvas");
+      el.className = "glass-backdrop__layer";
+      el.width = W;
+      el.height = H;
+      parent.appendChild(el);
+      return el;
+    });
+  const layers = makeLayers(root);
+  // Saturated copy of the layers, shown only inside the glass panels (see vibrancy.ts).
+  const vibrant = document.createElement("div");
+  vibrant.className = "glass-backdrop__vibrant";
+  const vibrantLayers = makeLayers(vibrant);
+  root.appendChild(vibrant);
   document.body.prepend(root);
+  trackPanels(vibrant);
 
   let active = 0;
   let current: string | null = null;
@@ -69,8 +79,11 @@ export function initBackdrop(): void {
     current = url;
     const next = layers[1 - active];
     const prev = layers[active];
+    const nextCopy = vibrantLayers[1 - active];
+    const prevCopy = vibrantLayers[active];
     if (!url) {
       prev.classList.remove("is-visible");
+      prevCopy.classList.remove("is-visible");
       return;
     }
     // Load first so the crossfade never shows an empty layer.
@@ -79,8 +92,11 @@ export function initBackdrop(): void {
     img.onload = () => {
       if (current !== url) return;
       paint(next, img);
+      nextCopy.getContext("2d")?.drawImage(next, 0, 0);
       next.classList.add("is-visible");
+      nextCopy.classList.add("is-visible");
       prev.classList.remove("is-visible");
+      prevCopy.classList.remove("is-visible");
       active = 1 - active;
     };
     img.src = url;

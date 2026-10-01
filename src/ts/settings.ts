@@ -101,7 +101,7 @@ function buildPanel(): HTMLElement {
       }),
     ),
     row(
-      "Blur",
+      "Menu blur",
       segmented(settings.blur, (l) => {
         settings.blur = l;
         save();

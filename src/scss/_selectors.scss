@@ -30,5 +30,17 @@ $card:            ".main-card-card";
 $track-row:       "[data-testid='tracklist-row']";
 $scroll-handle:   ".os-scrollbar-handle";
 
+// Persistent glass surfaces. They get no live backdrop-filter (see _mixins.scss `glass`): src/ts/vibrancy.ts
+// reads this list from --glass-panels and clips a pre-saturated copy of the backdrop to their shapes.
+$vibrant-panels: (
+  ".Root__nav-bar .main-yourLibraryX-libraryContainer",
+  $main-view,
+  $right-sidebar,
+  $now-playing,
+  ".main-globalNav-searchContainer button",
+  ".main-globalNav-contentRight button",
+  ".main-globalNav-searchInputSection input"
+);
+
 // Our own elements (created in backdrop.ts)
 $backdrop:        ".glass-backdrop";

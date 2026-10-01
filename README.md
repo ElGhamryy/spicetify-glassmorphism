@@ -55,10 +55,10 @@ spicetify apply
 Click the sliders icon in the top bar, next to the Spicetify icon:
 
 - Album art backdrop: on or off
-- Blur: low, medium, high
+- Menu blur: low, medium, high (menus, popovers and dialogs; the main panels use no live blur, see Performance)
 - Frost (panel opacity): low, medium, high
 
-If Spotify feels slow, set Blur to Low. Settings are saved in Spotify's local storage.
+Settings are saved in Spotify's local storage.
 
 ## Uninstall
 
@@ -90,7 +90,7 @@ then delete `%APPDATA%\spicetify` and `%LOCALAPPDATA%\spicetify`.
   spicetify restore backup apply
   ```
 - **`spicetify apply` fails or reports it cannot find Spotify.** You probably have the Microsoft Store version. Uninstall it and install the desktop version.
-- **Spotify is slow.** Set Blur to Low in the Glass settings, or turn off the album art backdrop. The blur on large panels is the main cost.
+- **Spotify is slow.** Make sure `spicetify watch` is not running and that Spotify was not started with a debug port (`--remote-debugging-port`); both add overhead. If it is still slow, open an issue with your Spotify version and the page you were on.
 - **The minimize, maximize and close buttons look darker than the rest of the top bar.** Windows draws those buttons, so the theme cannot style them. The Fluent theme documents a `--transparent-window-controls` Spotify launch flag for this. It is untested with Glass.
 - **A page shows a solid colour band or a hard edge.** Spotify renames its CSS classes between releases. Please open an issue with a screenshot and the page you were on.
 
@@ -118,16 +118,28 @@ Layout of `src/`:
 | `ts/backdrop.ts` | Album-art backdrop, drawn on small canvases |
 | `ts/settings.ts` | Top-bar button and settings popover |
 | `ts/opaque.ts` | Finds solid background bands by colour and marks them for CSS |
-| `ts/sticky.ts` | Pinned track-list header detection, scrolling artist-photo header |
+| `ts/sticky.ts` | Pinned track-list header detection, artist-photo header marking and scrolling |
+| `ts/vibrancy.ts` | Clips the saturated backdrop copy to the glass panels' outlines |
 | `ts/scheme.ts` | Light or dark scheme detection |
 | `color.ini` | Color schemes |
 
 Reference notes: [docs/selectors.md](docs/selectors.md).
 
+## Performance
+
+Measured by scrolling Liked Songs, Home, an artist page and an album with a scripted wheel and recording CPU time per Spotify process, against Spotify with the theme switched off. Glass is within run-to-run noise of vanilla on all four. What keeps it there:
+
+- **No live `backdrop-filter` on persistent panels.** The browser re-runs one whenever anything inside the panel repaints, which for a scrolling list is every frame (the single largest GPU cost, about 2-4x vanilla). Only the static backdrop sits behind the panels, so `vibrancy.ts` keeps a saturated copy of the backdrop behind them, clipped to their outlines. Menus, popovers and dialogs keep the live blur: they sit over text and are short-lived.
+- **No `:has()` over a `style` attribute.** Spotify rewrites inline styles on list rows constantly, and each rewrite re-evaluated such selectors. It doubled style and layout cost while scrolling. The artist-header photo is marked from script instead (`sticky.ts`).
+- Script work is incremental: observers look at added nodes only, and the per-node checks are O(1).
+
+When changing the theme, avoid reintroducing either pattern, and re-measure.
+
 ## Known limits
 
 - The top bar and pinned track-list header use a mostly opaque tint instead of live blur, because blur does not reach the scrolling rows underneath in Spotify's renderer.
 - Cards and sidebar sections have no blur of their own: a blur nested inside another blur draws a hard seam.
+- Panels are glass over the album-art backdrop only. Content never shows through them live, because nothing scrolls behind a panel.
 - Spicetify's built-in popup modal and profile-menu items do not show on current Spotify builds, so settings use their own popover.
 - Not tested on macOS or Linux.
 
