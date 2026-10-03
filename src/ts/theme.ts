@@ -3,6 +3,7 @@ import { applyScheme } from "./scheme";
 import { initBackdrop } from "./backdrop";
 import { initSticky } from "./sticky";
 import { initOpaque } from "./opaque";
+import { initHealth } from "./health";
 import { initSettings, registerPanel } from "./settings";
 
 function safe(name: string, fn: () => void): void {
@@ -31,5 +32,6 @@ function whenUiReady(fn: () => void, tries = 0): void {
   safe("backdrop", initBackdrop);
   safe("sticky", initSticky);
   safe("opaque", initOpaque);
+  safe("health", initHealth);
   whenUiReady(() => safe("panel", registerPanel));
 })();

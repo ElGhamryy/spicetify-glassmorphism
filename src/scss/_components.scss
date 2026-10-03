@@ -33,9 +33,14 @@
 }
 
 // ---- Cards ----
-#{$card} {
-  @include glass-flat(thin, md);
-  @include lift;
+// Cards (Home shelves, search results) have no box at rest, as in Spotify, because a box around each
+// made cards with longer titles taller than their neighbours. Spotify draws a solid dark surface on
+// hover (the card's ::after); swap it for the theme's soft hover tint.
+// Only while hovered or focused: Spotify toggles this surface's colour, so overriding it unconditionally
+// would draw a box around every card at rest.
+#{$card}:hover::after,
+#{$card}:focus-within::after {
+  background-color: var(--glass-hover) !important;
 }
 
 // ---- Right sidebar ----
@@ -104,6 +109,14 @@
 
 // Now-playing sidebar: Spotify lays dark gradients over the canvas/cover area (and behind the track
 // title). They end abruptly and read as a second backdrop inside the glass, so they are removed.
+// Spotify also lays decorative dark gradients (pseudo-elements without a stable name) over the cover and
+// behind the title. They fade to Spotify's solid colour and end in a hard line across the panel, so any
+// gradient on a pseudo-element inside the panel is removed.
+#{$npv-panel} *::before,
+#{$npv-panel} *::after {
+  background-image: none !important;
+}
+
 #{$npv-visuals} {
   &::before,
   &::after {

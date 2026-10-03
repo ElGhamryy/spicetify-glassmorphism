@@ -60,6 +60,22 @@ Click the sliders icon in the top bar, next to the Spicetify icon:
 
 Settings are saved in Spotify's local storage.
 
+## Staying working after Spotify updates
+
+Spotify updates itself, and each update overwrites Spicetify's patch, so the theme disappears until it is re-applied (and an old Spicetify CLI may not understand the new Spotify). Windows:
+
+```powershell
+./auto-repair.ps1 -Enable     # check at sign-in and every 6 hours, repair when needed
+./auto-repair.ps1 -DryRun     # just report what it would do
+./auto-repair.ps1 -Disable    # turn it off
+```
+
+When Spotify's version no longer matches Spicetify's backup, it updates the CLI and runs `spicetify backup apply`. A repair restarts Spotify for a few seconds. Log: `%LOCALAPPDATA%\spicetify-glass-auto-repair.log`.
+
+This cannot help when Spotify *renames* the elements the theme styles. In that case Glass shows a one-time notice (once per Spotify version) and you need a theme update: `git pull` and re-run `install.ps1` (or reinstall from Marketplace).
+
+The alternative is to stop Spotify updating at all: `spicetify spotify-updates block` (undo with `unblock`). That keeps the theme working but also keeps you on an old Spotify, without its fixes, so it is not the default recommendation.
+
 ## Uninstall
 
 Turn the theme off and remove it, keeping Spicetify:

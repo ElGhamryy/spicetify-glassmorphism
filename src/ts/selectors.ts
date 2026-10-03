@@ -7,6 +7,7 @@ const VARS = {
   sidebar: "--glass-sel-sidebar",
   mainView: "--glass-sel-main-view",
   trackHeader: "--glass-sel-track-header",
+  health: "--glass-sel-health",
 } as const;
 
 const cache = new Map<string, string>();

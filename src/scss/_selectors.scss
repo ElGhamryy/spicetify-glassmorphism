@@ -30,13 +30,15 @@ $popover-layer:   "#floating-ui-popover-layer";
 $context-menu:    "#context-menu";
 
 // Content
-$card:            "[data-encore-id='card']";
-$track-row:       "[role='grid'] [role='row']";
+// Real track rows carry aria-rowindex; Home shelves use the same grid/row roles for their cells and must not match.
+$track-row:       "#main-view [role='grid'] [role='row'][aria-rowindex]";
 $track-header:    "[role='grid'] > [role='presentation']:first-child";
+$card:            "[data-encore-id='card']";
 $scroll-handle:   ".os-scrollbar-handle";
 $entity-band:     "[data-testid='entity-header'] > div:first-child";
 $entity-wash:     "[data-testid='entity-header'] + *";
 $npv-root:        ".NowPlayingView";
+$npv-panel:       "[data-testid='NPV_Panel_OpenDiv']";
 $npv-section:     "[data-testid='NPV_Panel_OpenDiv'] > div:nth-child(n+2)";
 $npv-visuals:     "[data-testid='track-visual-enhancement'], [data-testid='minimized-track-visual-enhancement']";
 $page-bodies:     "[data-testid='playlist-page'], [data-testid='action-bar']";
@@ -51,6 +53,9 @@ $vibrant-panels: (
   $nav-icon-button,
   $search-input
 );
+
+// Surfaces that must exist for the theme to be working; src/ts/health.ts warns if one is missing.
+$health: ($main-view, $library, $now-playing);
 
 // Our own elements (created in backdrop.ts)
 $backdrop:        ".glass-backdrop";

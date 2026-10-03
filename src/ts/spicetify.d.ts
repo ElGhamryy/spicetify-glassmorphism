@@ -8,7 +8,8 @@ interface SpicetifyPlayer {
 interface Window {
   Spicetify?: {
     Player?: SpicetifyPlayer;
-    Platform?: { History?: { listen(cb: (loc: { pathname: string }) => void): () => void } };
+    Platform?: { version?: string; History?: { listen(cb: (loc: { pathname: string }) => void): () => void } };
+    showNotification?: (text: string, isError?: boolean) => void;
     Topbar?: { Button: new (label: string, iconSvg: string, onClick: () => void) => unknown };
 
   };
