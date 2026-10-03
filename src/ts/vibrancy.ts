@@ -6,7 +6,7 @@
 // kept behind them and clipped to the panels' outlines. The clip is rebuilt only when a panel moves
 // or resizes.
 
-const VAR = "--glass-panels";
+import { selector as published } from "./selectors";
 
 function roundedRect(x: number, y: number, w: number, h: number, radius: number): string {
   const r = Math.max(0, Math.min(radius, w / 2, h / 2));
@@ -26,7 +26,7 @@ function radiusOf(el: Element, w: number, h: number): number {
 }
 
 export function trackPanels(shape: HTMLElement): void {
-  const selector = getComputedStyle(document.documentElement).getPropertyValue(VAR).trim();
+  const selector = published("panels");
   if (!selector) return;
 
   const watched = new Set<Element>();

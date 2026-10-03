@@ -3,7 +3,7 @@
 A frosted-glass theme for [Spicetify](https://spicetify.app/), inspired by Apple's translucent materials.
 Floating rounded panels, backdrop blur, soft edge highlights, and an album-art backdrop that crossfades on every track.
 
-Written in SCSS and TypeScript. Built and tested on Windows with desktop Spotify and Spicetify 2.45.
+Written in SCSS and TypeScript. Built and tested on Windows with desktop Spotify 1.3.3 and Spicetify 2.45.3.
 
 ## Requirements
 
@@ -85,10 +85,10 @@ then delete `%APPDATA%\spicetify` and `%LOCALAPPDATA%\spicetify`.
 
 ## Troubleshooting
 
-- **Spotify updated and the theme looks broken or is gone.** Spotify updates overwrite Spicetify's patch. Run:
-  ```bash
-  spicetify restore backup apply
-  ```
+- **Spotify updated and the theme looks broken or is gone.** Spotify updates overwrite Spicetify's patch. In order:
+  1. Update Spicetify (`spicetify update`). Spicetify mounts its own top-bar button by Spotify's class names, so an old CLI can lose the Glass settings button on a new Spotify.
+  2. Re-patch. If Spicetify says the Spotify version and backup are mismatched, `spicetify backup apply` takes a fresh backup of the new version and applies; otherwise use `spicetify restore backup apply`.
+  3. If the panels are plain and unstyled, Spotify renamed the elements the theme targets. Open an issue with your Spotify version; the fix is in `src/scss/_selectors.scss`, the only place selectors are defined.
 - **`spicetify apply` fails or reports it cannot find Spotify.** You probably have the Microsoft Store version. Uninstall it and install the desktop version.
 - **Spotify is slow.** Make sure `spicetify watch` is not running and that Spotify was not started with a debug port (`--remote-debugging-port`); both add overhead. If it is still slow, open an issue with your Spotify version and the page you were on.
 - **The minimize, maximize and close buttons look darker than the rest of the top bar.** Windows draws those buttons, so the theme cannot style them. The Fluent theme documents a `--transparent-window-controls` Spotify launch flag for this. It is untested with Glass.

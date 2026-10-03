@@ -4,6 +4,8 @@
 //  2. The artist-page photo is pinned behind the content while the page scrolls. Move it up with the
 //     scroll so it leaves with the page instead of hanging behind everything.
 
+import { selector } from "./selectors";
+
 const TOP_BAR_HEIGHT = 64;
 // Photo layer of an artist/playlist header: it carries an inline background-image. Its parent is the
 // "hero" wrapper. This is looked up in script and marked with a class, because the equivalent CSS
@@ -50,10 +52,10 @@ export function initSticky(): void {
 
   function update(): void {
     frame = 0;
-    const view = document.querySelector<HTMLElement>(".Root__main-view");
+    const view = document.querySelector<HTMLElement>(selector("mainView"));
     if (!view) return;
 
-    const header = document.querySelector<HTMLElement>(".main-trackList-trackListHeader");
+    const header = document.querySelector<HTMLElement>(selector("trackHeader"));
     if (header) {
       const stuck = header.getBoundingClientRect().top <= view.getBoundingClientRect().top + TOP_BAR_HEIGHT + 2;
       header.classList.toggle("glass-stuck", stuck);
@@ -68,7 +70,7 @@ export function initSticky(): void {
     (e) => {
       const target = e.target;
       // Only the main view's own scroller drives the hero; ignore sidebar and list scrolling.
-      if (target instanceof HTMLElement && target.closest(".Root__main-view") && target.scrollHeight > target.clientHeight + 100) {
+      if (target instanceof HTMLElement && target.closest(selector("mainView")) && target.scrollHeight > target.clientHeight + 100) {
         scrollTop = target.scrollTop;
       }
       if (!frame) frame = requestAnimationFrame(update);

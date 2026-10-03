@@ -7,10 +7,13 @@ $mesh:
   radial-gradient(70vw 50vh at 50% 105%, rgba(90, 200, 255, 0.25), transparent 70%),
   rgb(var(--glass-tint-rgb));
 
-// Read by src/ts/vibrancy.ts.
+// Selectors published to the scripts (read with src/ts/selectors.ts).
 :root {
   --glass-panels: #{$vibrant-panels};
-}
+  --glass-sel-scopes: #{$main-view}, #{$right-sidebar};
+  --glass-sel-sidebar: #{$right-sidebar};
+  --glass-sel-main-view: #{$main-view};
+  --glass-sel-track-header: #{$track-header};}
 
 // Two stacked art layers (created by src/ts/backdrop.ts) crossfade on track change.
 // They sit behind #main, so every glass panel shows the same picture.

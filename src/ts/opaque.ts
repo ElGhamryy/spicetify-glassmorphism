@@ -6,7 +6,8 @@
 // Scanning reads layout and styles, so it only looks at nodes that were just added (plus one full
 // pass on load and after navigation), and it runs in a single frame after changes settle.
 
-const SCOPES = ".Root__main-view, .Root__right-sidebar-peek";
+import { selector } from "./selectors";
+
 const MIN_W = 120;
 const MIN_H = 36;
 
@@ -18,6 +19,8 @@ function toRgb(value: string): string {
 }
 
 export function initOpaque(): void {
+  const SCOPES = selector("scopes");
+  const SIDEBAR = selector("sidebar");
   const root = getComputedStyle(document.documentElement);
   const main = toRgb(root.getPropertyValue("--spice-main"));
   const elevated = toRgb(root.getPropertyValue("--spice-main-elevated"));
@@ -47,9 +50,9 @@ export function initOpaque(): void {
   function scanTree(top: Element): void {
     const scope = top.closest<HTMLElement>(SCOPES);
     if (!scope) return;
-    const sidebar = scope.classList.contains("Root__right-sidebar-peek");
-    if (top instanceof HTMLElement && top.matches("div, section, header")) check(top, sidebar);
-    for (const el of top.querySelectorAll<HTMLElement>("div, section, header")) check(el, sidebar);
+    const sidebar = scope.matches(SIDEBAR);
+    if (top instanceof HTMLElement && top.matches("div, section, header, aside")) check(top, sidebar);
+    for (const el of top.querySelectorAll<HTMLElement>("div, section, header, aside")) check(el, sidebar);
   }
 
   function run(): void {
@@ -65,9 +68,12 @@ export function initOpaque(): void {
     for (const node of batch) if (node.isConnected) scanTree(node);
   }
 
+  // A short fixed delay, not a debounce: while a page is still streaming in, a debounce keeps
+  // getting pushed back and solid bands stay visible until the page goes quiet. Batching nodes for
+  // one short delay keeps the work to one pass per burst.
   const schedule = () => {
-    if (timer) clearTimeout(timer);
-    timer = window.setTimeout(() => requestAnimationFrame(run), 120);
+    if (timer) return;
+    timer = window.setTimeout(() => requestAnimationFrame(run), 24);
   };
 
   new MutationObserver((mutations) => {

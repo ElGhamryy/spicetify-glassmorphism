@@ -13,17 +13,22 @@ body {
 }
 
 #{$top-container},
-#{$global-nav} {
+#{$global-nav},
+#{$nav-bar} nav > *,
+#{$library} > *,
+#{$right-sidebar} > *,
+#{$npv-root},
+#{$npv-root}::before {
   @include clear;
 }
 
 // Left library rail
 #{$nav-bar} {
   @include clear;
+}
 
-  .main-yourLibraryX-libraryContainer {
-    @include glass-panel(regular, lg);
-  }
+#{$library} {
+  @include glass-panel(regular, lg);
 }
 
 // Main view
@@ -46,11 +51,6 @@ body {
   overflow: visible; // keep tooltips and the volume slider from being clipped
 }
 
-// Top bar inside the main view: drop the colored slab and its dark overlay.
-#{$top-bar-overlay} {
-  background: transparent !important;
-}
-
 // Sticky bars (top bar, pinned track-list header) sit over scrolling rows. Backdrop blur does not
 // reach those rows in Spotify's compositor setup, so these bars use a mostly opaque tint instead.
 // Spotify fades the top bar background in with scroll, so it fades in here too.
@@ -62,7 +62,7 @@ body {
   border: 0;
 }
 
-.main-trackList-trackListHeader {
+#{$track-header} {
   background: transparent !important;
   border-bottom: 1px solid rgba(var(--glass-edge-rgb), 0.12);
 

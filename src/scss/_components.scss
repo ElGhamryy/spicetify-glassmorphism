@@ -5,32 +5,25 @@
 // Spotify's button and input rules set background-color with higher specificity, so the
 // translucent fill needs !important to win. The sheen and rim come from the glass mixin.
 #{$nav-icon-button},
-.main-globalNav-searchInputSection input,
-.main-globalNav-searchInputSection input:hover,
-.main-globalNav-searchInputSection input:focus {
+#{$search-input},
+#{$search-input}:hover,
+#{$search-input}:focus {
   @include glass(thin, pill, false, false);
   background-color: var(--glass-fill-thin) !important;
   transition: background-color var(--glass-fast) var(--glass-ease);
 }
 
-.main-globalNav-searchInputSection input:focus {
+#{$search-input}:focus {
   background-color: var(--glass-fill-regular) !important;
 }
 
-// ---- Left rail ----
-.main-yourLibraryX-entryPoints {
-  @include clear;
-}
-
 // ---- Main view content ----
-.playlist-playlist-playlistContent,
-.main-view-container__scroll-node-child,
-.main-actionBar-ActionBarContainer {
+#{$page-bodies},
+.main-view-container__scroll-node-child {
   background: transparent !important;
 }
 
-
-.main-trackList-trackListRow {
+#{$track-row} {
   border-radius: var(--glass-radius-sm);
   transition: background-color var(--glass-fast) var(--glass-ease);
 
@@ -46,12 +39,7 @@
 }
 
 // ---- Right sidebar ----
-.NowPlayingView,
-.NowPlayingView::before {
-  background: transparent !important;
-}
-
-.main-nowPlayingView-section {
+#{$npv-section} {
   @include glass-flat(thin, md);
 }
 
@@ -116,10 +104,11 @@
 
 // Now-playing sidebar: Spotify lays dark gradients over the canvas/cover area (and behind the track
 // title). They end abruptly and read as a second backdrop inside the glass, so they are removed.
-.main-nowPlayingView-canvasVisualEnhancement::before,
-.main-nowPlayingView-canvasVisualEnhancement::after,
-.main-nowPlayingView-contextItemInfo::before {
-  display: none !important;
+#{$npv-visuals} {
+  &::before,
+  &::after {
+    display: none !important;
+  }
 }
 
 // Headers that Spotify tints with the artist/playlist colour end in a hard edge and, on scroll,
@@ -140,13 +129,13 @@
 // wash that starts at the same colour and fades out (actionBarBackground). Together they are one
 // continuous drop, so the band keeps its full strength to the bottom and only its opacity is lowered
 // to match where the wash begins (0.7). Fading the band out too would leave a clear gap between them.
-.main-entityHeader-backgroundColor {
+#{$entity-band} {
   opacity: 0.7;
 }
 
 // Headers with a photo are different: the photo dissolves to nothing, so the wash under it has to fade
 // in from nothing or it starts at full strength right where the photo ends and draws a line.
-:root[data-glass-hero] .main-view-container [class*="actionBarBackground"] {
+:root[data-glass-hero] #{$entity-wash} {
   -webkit-mask-image: linear-gradient(transparent, #000 85%);
   mask-image: linear-gradient(transparent, #000 85%);
 }
