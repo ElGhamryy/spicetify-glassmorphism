@@ -148,8 +148,32 @@ function togglePopover(): void {
   });
 }
 
+const LABEL = "Glass settings";
+
+// Spicetify mounts its top-bar buttons by one of Spotify's class names, and each Spotify update that
+// renames it leaves the button missing (the CLI is usually updated a while later). So after giving
+// Spicetify a moment, check that the button exists, and if not mount our own beside the history
+// arrows, found by position rather than by class. The arrows are cloned so the button matches them.
+function mountOwnButton(): void {
+  if (document.querySelector(`[aria-label="${LABEL}"]`)) return;
+  const arrows = document.querySelectorAll<HTMLElement>("#global-nav-bar > :nth-child(2) button");
+  const anchor = arrows[arrows.length - 1];
+  if (!anchor) return;
+  const button = anchor.cloneNode(true) as HTMLElement;
+  button.removeAttribute("disabled");
+  button.removeAttribute("aria-disabled");
+  button.removeAttribute("data-testid");
+  button.setAttribute("aria-label", LABEL);
+  button.setAttribute("title", LABEL);
+  const icon = button.querySelector("span") ?? button;
+  icon.innerHTML = ICON;
+  button.addEventListener("click", togglePopover);
+  anchor.after(button);
+}
+
 export function registerPanel(): void {
   const sp = window.Spicetify;
-  if (!sp?.Topbar) return;
-  new sp.Topbar.Button("Glass settings", ICON, togglePopover);
+  if (sp?.Topbar) new sp.Topbar.Button(LABEL, ICON, togglePopover);
+  // The top bar can mount late, and can be re-rendered (dropping our button), so check a few times.
+  for (const ms of [2500, 6000, 12000]) setTimeout(mountOwnButton, ms);
 }

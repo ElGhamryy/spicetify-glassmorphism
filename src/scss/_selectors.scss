@@ -35,8 +35,9 @@ $track-row:       "#main-view [role='grid'] [role='row'][aria-rowindex]";
 $track-header:    "[role='grid'] > [role='presentation']:first-child";
 $card:            "[data-encore-id='card']";
 $scroll-handle:   ".os-scrollbar-handle";
-$entity-band:     "[data-testid='entity-header'] > div:first-child";
-$entity-wash:     "[data-testid='entity-header'] + *";
+$overscroll:      "[data-testid='overscroll-background']";
+// The colour layer is the header's empty absolute child; on artist pages the first child holds the title.
+$entity-band:     "[data-testid='entity-header'] > div:first-child:empty";
 $npv-root:        ".NowPlayingView";
 $npv-panel:       "[data-testid='NPV_Panel_OpenDiv']";
 $npv-section:     "[data-testid='NPV_Panel_OpenDiv'] > div:nth-child(n+2)";

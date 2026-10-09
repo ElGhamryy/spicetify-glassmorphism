@@ -128,6 +128,12 @@
 // turn into a solid slab. Drop the solid wash and let the photo dissolve into the glass over most of
 // its height. Pure CSS (no script) so the fade is there from the first frame; the wrapper is the
 // element holding the photo layers, recognised by their inline background-image.
+// Spotify 1.3.4 added a full-height layer of the artist's colour (70% opaque) behind the page. It lies over
+// the content and dims it, and the photo fade above already supplies the colour, so it is cleared.
+#{$overscroll} {
+  background: transparent !important;
+}
+
 // .glass-hero is set by src/ts/sticky.ts (see there for why this is not a :has() selector).
 .glass-hero {
   -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.85) 22%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0.18) 80%, transparent 100%);
@@ -138,17 +144,10 @@
   }
 }
 
-// Plain playlist/album headers: a solid colour band (.main-entityHeader-backgroundColor) sits above a
-// wash that starts at the same colour and fades out (actionBarBackground). Together they are one
-// continuous drop, so the band keeps its full strength to the bottom and only its opacity is lowered
-// to match where the wash begins (0.7). Fading the band out too would leave a clear gap between them.
+// Playlist/album headers: one empty absolute layer holds the colour and its own fade (as of Spotify
+// 1.3.4; earlier builds had a separate band and wash). Its opacity is lowered so the page colour
+// does not overpower the glass. Artist pages have no such layer: their header's first child holds
+// the title, hence :empty in the selector.
 #{$entity-band} {
   opacity: 0.7;
-}
-
-// Headers with a photo are different: the photo dissolves to nothing, so the wash under it has to fade
-// in from nothing or it starts at full strength right where the photo ends and draws a line.
-:root[data-glass-hero] #{$entity-wash} {
-  -webkit-mask-image: linear-gradient(transparent, #000 85%);
-  mask-image: linear-gradient(transparent, #000 85%);
 }
